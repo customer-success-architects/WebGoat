@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>2.7.1</version>
     </parent>
 
     <name>WebGoat</name>
@@ -119,8 +119,7 @@
         <webwolf.port>9090</webwolf.port>
 
         <!-- Shared properties with plugins and version numbers across submodules-->
-        <ant.version>1.6.5</ant.version>
-        <asciidoctorj.version>2.5.2</asciidoctorj.version>
+        <asciidoctorj.version>2.5.3</asciidoctorj.version>
         <bootstrap.version>3.3.7</bootstrap.version>
         <cglib.version>2.2</cglib.version> <!-- do not update necessary for lesson -->
         <checkstyle.version>3.1.2</checkstyle.version>
@@ -150,6 +149,13 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>9.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-exec</artifactId>
@@ -180,16 +186,6 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
                 <version>${cglib.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant-launcher</artifactId>
-                <version>${ant.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>${ant.version}</version>
             </dependency>
             <dependency>
                 <groupId>xml-resolver</groupId>
@@ -241,6 +237,16 @@
                 <artifactId>webdrivermanager</artifactId>
                 <version>${webdriver.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jruby</groupId>
+                <artifactId>jruby</artifactId>
+                <version>9.3.6.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -287,7 +293,7 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDir></workingDir>
+                                    <workingDir>${project.build.directory}</workingDir>
                                     <arguments>
                                         <argument>java</argument>
                                         <argument>-jar</argument>
@@ -348,8 +354,8 @@
                         <version>6.5.1</version>
                         <configuration>
                             <failBuildOnCVSS>7</failBuildOnCVSS>
-                            <skipProvidedScope>true</skipProvidedScope>
-                            <skipRuntimeScope>true</skipRuntimeScope>
+                            <skipProvidedScope>false</skipProvidedScope>
+                            <skipRuntimeScope>false</skipRuntimeScope>
                             <suppressionFiles>
                                 <!--suppress UnresolvedMavenProperty -->
                                 <suppressionFile>
@@ -453,14 +459,6 @@
             <artifactId>cglib-nodep</artifactId>
         </dependency>
         <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant-launcher</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant</artifactId>
-        </dependency>
-        <dependency>
             <groupId>xml-resolver</groupId>
             <artifactId>xml-resolver</artifactId>
         </dependency>
@@ -517,18 +515,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -555,14 +543,7 @@
                             <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoctorj</artifactId>
                         </dependency>
-                        <dependency>
-                            <groupId>org.jruby</groupId>
-                            <artifactId>jruby-complete</artifactId>
-                        </dependency>
                     </requiresUnpack>
-                    <jvmArguments>
-                        <!-- -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000-->
-                    </jvmArguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -591,7 +572,7 @@
                         <logback.configurationFile>${basedir}/src/test/resources/logback-test.xml</logback.configurationFile>
                     </systemPropertyVariables>
                     <argLine>-Xmx512m -Dwebgoatport=${webgoat.port} -Dwebwolfport=${webwolf.port}</argLine>
-                    <includes>**/*IntegrationTest.java</includes>
+                    <includes>org/owasp/webgoat/*Test</includes>
                 </configuration>
                 <executions>
                     <execution>
@@ -618,6 +599,8 @@
                     </argLine>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>src/it/java</exclude>
+                        <exclude>org/owasp/webgoat/*Test</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -657,6 +640,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

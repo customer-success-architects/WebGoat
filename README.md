@@ -47,10 +47,10 @@ docker run -it -p 127.0.0.1:8080:8080 -p 127.0.0.1:9090:9090 -e TZ=Europe/Amster
 
 ## 2. Standalone
 
-Download the latest WebGoat and WebWolf release from [https://github.com/WebGoat/WebGoat/releases](https://github.com/WebGoat/WebGoat/releases)
+Download the latest WebGoat release from [https://github.com/WebGoat/WebGoat/releases](https://github.com/WebGoat/WebGoat/releases)
 
 ```shell
-java -Dfile.encoding=UTF-8 -jar webgoat-8.2.3.jar 
+java -Dfile.encoding=UTF-8 -Dwebgoat.port=8080 -Dwebwolf.port=9090 -jar webgoat-8.2.3.jar 
 ```
 
 Click the link in the log to start WebGoat.
@@ -93,10 +93,10 @@ Now we are ready to run the project. WebGoat 8.x is using Spring-Boot.
 ./mvnw.cmd spring-boot:run
 
 ```
-... you should be running WebGoat on localhost:8080/WebGoat momentarily
+... you should be running WebGoat on http://localhost:8080/WebGoat momentarily.
 
 
-To change the IP address add the following variable to the `WebGoat/webgoat-container/src/main/resources/application.properties file`:
+To change the IP address add the following variable to the `WebGoat/webgoat-container/src/main/resources/application.properties` file:
 
 ```
 server.address=x.x.x.x
@@ -111,8 +111,10 @@ For instance running as a jar on a Linux/macOS it will look like this:
 export EXCLUDE_CATEGORIES="CLIENT_SIDE,GENERAL,CHALLENGE"
 export EXCLUDE_LESSONS="SqlInjectionAdvanced,SqlInjectionMitigations"
 java -jar target/webgoat-8.2.3-SNAPSHOT.jar
+```
 
 Or in a docker run it would (once this version is pushed into docker hub) look like this:
+
 ```Shell
 docker run -d -p 8080:8080 -p 9090:9090 -e TZ=Europe/Amsterdam -e EXCLUDE_CATEGORIES="CLIENT_SIDE,GENERAL,CHALLENGE" -e EXCLUDE_LESSONS="SqlInjectionAdvanced,SqlInjectionMitigations" webgoat/webgoat
 ```
